@@ -27,6 +27,7 @@ dicom-server-lambda/
 ├── file_downloader.py      # Multi-source file downloader
 ├── temp_cleaner.py         # Temporary file cleanup
 ├── requirements.txt        # Python dependencies
+├── build.py               # Build system for creating packages
 ├── deploy.py              # Automated deployment script
 ├── test_lambda.py         # Lambda function testing
 ├── test_local_dicom.py    # Local DICOM file testing
@@ -34,6 +35,10 @@ dicom-server-lambda/
 ├── .gitignore            # Git ignore file
 ├── README.md             # This documentation
 ├── QUICKSTART.md         # Quick start guide
+├── output/               # Build artifacts (auto-created)
+│   ├── dicom-server-lambda.zip           # Simple package
+│   ├── dicom-server-lambda-github-*.zip  # GitHub upload package
+│   └── dicom-server-lambda-lambda-*.zip  # Lambda deployment package
 └── temp/                 # Temporary files (auto-created)
     └── converted_*.jpg   # Output files
 ```
@@ -118,6 +123,68 @@ python test_local_dicom.py "path/to/your/dicom/file.dcm" --cleanup
 
 # Test Lambda function components
 python test_lambda.py
+```
+
+## Building & Packaging
+
+The project includes an automated build system to create clean deployment packages.
+
+### Build Script Usage
+
+```bash
+# Build all package types (recommended)
+python build.py
+
+# Build specific package type
+python build.py github    # For GitHub upload
+python build.py lambda    # For AWS Lambda deployment  
+python build.py simple    # Simple package with standard name
+```
+
+### Package Types
+
+1. **GitHub Package** (`dicom-server-lambda-github-YYYYMMDD_HHMMSS.zip`)
+   - Contains all project files including documentation
+   - Perfect for GitHub repository upload
+   - Includes README, tests, and configuration files
+
+2. **Lambda Package** (`dicom-server-lambda-lambda-YYYYMMDD_HHMMSS.zip`)
+   - Contains only essential runtime files
+   - Optimized for AWS Lambda deployment
+   - Smaller size, faster deployment
+
+3. **Simple Package** (`dicom-server-lambda.zip`)
+   - Standard package with consistent naming
+   - Contains all project files
+   - Good for general distribution
+
+### Build Output
+
+All packages are created in the `output/` directory:
+```bash
+output/
+├── dicom-server-lambda.zip                    # Simple package
+├── dicom-server-lambda-github-20240101_120000.zip  # GitHub package
+└── dicom-server-lambda-lambda-20240101_120000.zip  # Lambda package
+```
+
+### Manual ZIP Creation
+
+If you prefer manual ZIP creation:
+```bash
+# Create output directory
+mkdir output
+
+# Create ZIP with essential files (Windows PowerShell)
+Compress-Archive -Path ".gitignore","build.py","deploy.py","dicom_converter.py","file_downloader.py","lambda_config.json","lambda_function.py","QUICKSTART.md","README.md","requirements.txt","temp_cleaner.py","test_lambda.py","test_local_dicom.py" -DestinationPath "output/dicom-server-lambda.zip" -Force
+
+# Or using Python zipfile (cross-platform)
+python -c "
+import zipfile
+files = ['.gitignore','build.py','deploy.py','dicom_converter.py','file_downloader.py','lambda_config.json','lambda_function.py','QUICKSTART.md','README.md','requirements.txt','temp_cleaner.py','test_lambda.py','test_local_dicom.py']
+with zipfile.ZipFile('output/dicom-server-lambda.zip', 'w') as z:
+    [z.write(f) for f in files if __import__('os').path.exists(f)]
+"
 ```
 
 ## AWS Lambda Deployment

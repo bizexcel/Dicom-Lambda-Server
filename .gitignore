@@ -129,9 +129,12 @@ dmypy.json
 .pyre/
 
 # AWS Lambda specific
-*.zip
 lambda_deployment_temp/
 *-deployment.zip
+
+# Build output
+output/
+*.zip
 
 # Test outputs
 test_output_*.jpg
