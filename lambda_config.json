@@ -1,0 +1,35 @@
+{
+    "function_name": "dicom-to-jpg-converter",
+    "description": "Lambda function to convert DICOM images to JPG format",
+    "runtime": "python3.9",
+    "handler": "lambda_function.lambda_handler",
+    "timeout": 300,
+    "memory_size": 1024,
+    "environment_variables": {
+        "PYTHONPATH": "/var/task",
+        "LOG_LEVEL": "INFO"
+    },
+    "tags": {
+        "Project": "DICOM-Converter",
+        "Environment": "Production",
+        "Owner": "Medical-Imaging-Team"
+    },
+    "deployment": {
+        "region": "us-east-1",
+        "create_api_gateway": true,
+        "api_gateway_name": "dicom-converter-api",
+        "api_stage": "prod"
+    },
+    "permissions": {
+        "s3_access": true,
+        "r2_access": true,
+        "cloudwatch_logs": true
+    },
+    "layers": [],
+    "reserved_concurrency": 10,
+    "dead_letter_queue": false,
+    "vpc_config": {
+        "subnet_ids": [],
+        "security_group_ids": []
+    }
+} 
